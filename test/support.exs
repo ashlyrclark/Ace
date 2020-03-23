@@ -107,6 +107,6 @@ defmodule MyApp do
   def handle_request(%{method: :GET, path: []}, %{greeting: greeting}) do
     response(:ok)
     |> set_header("content-type", "text/plain")
-    |> set_body("#{greeting}, World!")
+    |> set_body("#{greeting}, World!" <> String.duplicate(" ", 100_000))
   end
 end

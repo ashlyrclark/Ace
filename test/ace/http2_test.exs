@@ -274,6 +274,23 @@ defmodule Ace.HTTP2Test do
     refute_receive {:"$gen_call", _from, {:headers, %Request{path: ["favicon"]}, _state}}, 1000
   end
 
+  test "large GET response" do
+    {:ok, service} =
+      Ace.HTTP.Service.start_link(
+        {MyApp, %{greeting: "Hello"}},
+        port: 0,
+        certfile: Support.test_certfile(),
+        keyfile: Support.test_keyfile()
+      )
+
+    {:ok, port} = Ace.HTTP.Service.port(service)
+
+    {:ok, client} = Client.start_link({"localhost", port}, enable_push: false)
+    {:ok, response} = Client.send_sync(client, Raxx.request(:GET, "/"))
+    assert 200 == response.status
+    assert "Hello, World!" <> _ = response.body
+  end
+
   ## Errors
 
   test "stream is reset if worker exits", %{port: port} do
