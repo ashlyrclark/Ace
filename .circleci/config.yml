@@ -66,6 +66,9 @@ jobs:
       - attach_workspace:
           at: /home/circleci/ace
       - run:
+          name: Just Test
+          command: mix test --include ci:true
+      - run:
           name: Test Coverage
           command: mix coveralls.html --include ci:true
       - store_artifacts:
